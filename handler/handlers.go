@@ -38,7 +38,7 @@ func (c config) GetKey(ctx *gofr.Context) (interface{}, error) {
 	return resp, nil
 }
 
-//nolint:gocognit // SetKey is a handler function of type gofr.Handler, it sets keys
+// SetKey is a handler function of type gofr.Handler, it sets keys
 func (c config) SetKey(ctx *gofr.Context) (interface{}, error) {
 	input := make(map[string]string)
 
@@ -48,7 +48,8 @@ func (c config) SetKey(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	for key, value := range input {
-		if err = c.st.Set(ctx, key, value); err != nil {
+		err = c.st.Set(ctx, key, value)
+		if err != nil {
 			return nil, err
 		}
 	}

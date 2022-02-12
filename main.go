@@ -6,7 +6,7 @@ import (
 	"github.com/mcafee/generic-data-service/handler"
 	"github.com/mcafee/generic-data-service/handler/grpc"
 	"github.com/mcafee/generic-data-service/store"
-	"github.com/mcafee/generic-data-service/store/dynamoDB"
+	"github.com/mcafee/generic-data-service/store/dynamodb"
 	"github.com/mcafee/generic-data-service/store/redis"
 )
 
@@ -20,9 +20,9 @@ func main() {
 	switch backendStore {
 	case "redis":
 		s = redis.New()
-	case "dynamoDB":
+	case "dynamodb":
 		table := app.Config.Get("DYNAMODB_TABLE")
-		s = dynamoDB.New(table)
+		s = dynamodb.New(table)
 	default:
 		return
 	}
@@ -38,5 +38,4 @@ func main() {
 	grpc.RegisterGenericDataServiceServer(app.Server.GRPC.Server(), grpcHandler)
 
 	app.Start()
-
 }

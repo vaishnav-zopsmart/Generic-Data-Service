@@ -1,4 +1,4 @@
-package dynamoDB
+package dynamodb
 
 import (
 	"developer.zopsmart.com/go/gofr/pkg/errors"

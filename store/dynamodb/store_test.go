@@ -1,4 +1,4 @@
-package dynamoDB
+package dynamodb
 
 import (
 	"os"
@@ -54,15 +54,15 @@ func initializeTest(t *testing.T) (*gofr.Context, store.Storer) {
 
 	ctx := gofr.NewContext(nil, nil, app)
 
-	store := New("genericStore")
+	st := New("genericStore")
 
-	return ctx, store
+	return ctx, st
 }
 
 func TestGet(t *testing.T) {
-	ctx, store := initializeTest(t)
+	ctx, st := initializeTest(t)
 
-	resp, err := store.Get(ctx, "1")
+	resp, err := st.Get(ctx, "1")
 	if err != nil {
 		t.Errorf("Failed\tExpected %v\nGot %v\n", nil, err)
 	}
@@ -74,28 +74,28 @@ func TestGet_Error(t *testing.T) {
 	app := gofr.New()
 
 	ctx := gofr.NewContext(nil, nil, app)
-	store := New("dummy")
+	st := New("dummy")
 
-	_, err := store.Get(ctx, "1")
+	_, err := st.Get(ctx, "1")
 
 	assert.IsType(t, errors.DB{}, err)
 }
 
 func TestCreate(t *testing.T) {
-	ctx, store := initializeTest(t)
+	ctx, st := initializeTest(t)
 
 	key, value := "7", "John"
 
-	err := store.Set(ctx, key, value)
+	err := st.Set(ctx, key, value)
 	if err != nil {
 		t.Errorf("Failed\tExpected %v\nGot %v\n", nil, err)
 	}
 }
 
 func TestDelete(t *testing.T) {
-	ctx, store := initializeTest(t)
+	ctx, st := initializeTest(t)
 
-	err := store.Delete(ctx, "1")
+	err := st.Delete(ctx, "1")
 	if err != nil {
 		t.Errorf("Failed\tExpected %v\nGot %v\n", nil, err)
 	}

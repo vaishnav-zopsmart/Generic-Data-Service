@@ -7,14 +7,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 	"developer.zopsmart.com/go/gofr/pkg/gofr/request"
 	"developer.zopsmart.com/go/gofr/pkg/gofr/responder"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/mcafee/generic-data-service/store"
 )
 
@@ -26,7 +26,9 @@ func initializeTest(t *testing.T) (*store.MockStorer, *gofr.Gofr) {
 	return service, app
 }
 
-func getContext(method, url string, body []byte, pathParams map[string]string, app *gofr.Gofr) *gofr.Context {
+func getContext(method string, body []byte, pathParams map[string]string, app *gofr.Gofr) *gofr.Context {
+	const url = "/config"
+
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(method, url, bytes.NewReader(body))
 	req := request.NewHTTPRequest(r)
@@ -62,7 +64,7 @@ func TestConfig_GetKey(t *testing.T) {
 	for _, tc := range tests {
 		h := New(mockStore)
 
-		ctx := getContext(http.MethodGet, "/config", nil, map[string]string{"key": tc.key}, app)
+		ctx := getContext(http.MethodGet, nil, map[string]string{"key": tc.key}, app)
 
 		output, err := h.GetKey(ctx)
 
@@ -102,7 +104,7 @@ func TestConfig_SetKey(t *testing.T) {
 			return
 		}
 
-		ctx := getContext(http.MethodPost, "/config", body, nil, app)
+		ctx := getContext(http.MethodPost, body, nil, app)
 
 		output, err := h.SetKey(ctx)
 
@@ -128,14 +130,13 @@ func TestConfig_SetKeyBindError(t *testing.T) {
 		return
 	}
 
-	ctx := getContext(http.MethodPost, "/config", body, nil, app)
+	ctx := getContext(http.MethodPost, body, nil, app)
 
 	output, err := h.SetKey(ctx)
 
 	assert.Nil(t, output)
 
 	assert.Equal(t, expErr, err)
-
 }
 
 func TestConfig_DeleteKey(t *testing.T) {
@@ -160,7 +161,7 @@ func TestConfig_DeleteKey(t *testing.T) {
 	for _, tc := range tests {
 		h := New(mockStore)
 
-		ctx := getContext(http.MethodDelete, "/config", nil, map[string]string{"key": tc.key}, app)
+		ctx := getContext(http.MethodDelete, nil, map[string]string{"key": tc.key}, app)
 
 		output, err := h.DeleteKey(ctx)
 

@@ -11,7 +11,7 @@ import (
 type redisStore struct{}
 
 // New is factory function for store
-//nolint:revive // model should not be used without proper initilization with required dependency
+// model should not be used without proper initialization with required dependency
 func New() store.Storer {
 	return redisStore{}
 }
