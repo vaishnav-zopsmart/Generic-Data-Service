@@ -1,15 +1,18 @@
 package grpc
 
 import (
-	"developer.zopsmart.com/go/gofr/pkg/errors"
-	"developer.zopsmart.com/go/gofr/pkg/gofr"
-	"developer.zopsmart.com/go/gofr/pkg/gofr/request"
-	"github.com/golang/mock/gomock"
-	"github.com/mcafee/generic-data-service/store"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"developer.zopsmart.com/go/gofr/pkg/errors"
+	"developer.zopsmart.com/go/gofr/pkg/gofr"
+	"developer.zopsmart.com/go/gofr/pkg/gofr/request"
+
+	"github.com/mcafee/generic-data-service/store"
 )
 
 func initializeTest(t *testing.T) (*store.MockStorer, *gofr.Gofr) {
@@ -54,13 +57,12 @@ func TestConfig_GetKey(t *testing.T) {
 	}
 }
 
-
 func TestConfig_SetKey(t *testing.T) {
 	mockStore, app := initializeTest(t)
 
 	err := errors.DB{Err: errors.Error("redis: nil")}
-	mp1 := &Data{Key: "1",Value: "user1"}
-	mp2 := &Data{Key: "1",Value: "abcd"}
+	mp1 := &Data{Key: "1", Value: "user1"}
+	mp2 := &Data{Key: "1", Value: "abcd"}
 
 	mockStore.EXPECT().Set(gomock.Any(), mp1.Key, mp1.Value).Return(nil)
 	mockStore.EXPECT().Set(gomock.Any(), mp2.Key, mp2.Value).Return(err)
@@ -82,7 +84,7 @@ func TestConfig_SetKey(t *testing.T) {
 
 		grcpHandler := New(mockStore)
 
-		output, err := grcpHandler.SetKey(ctx,tc.input)
+		output, err := grcpHandler.SetKey(ctx, tc.input)
 
 		assert.Equal(t, tc.output, output)
 
@@ -90,13 +92,12 @@ func TestConfig_SetKey(t *testing.T) {
 	}
 }
 
-
 func TestConfig_DeleteKey(t *testing.T) {
 	mockStore, app := initializeTest(t)
 
 	err := errors.EntityNotFound{Entity: "value", ID: "2"}
 
-	mockStore.EXPECT().Delete(gomock.Any(), "1").Return( nil)
+	mockStore.EXPECT().Delete(gomock.Any(), "1").Return(nil)
 	mockStore.EXPECT().Delete(gomock.Any(), "2").Return(err)
 
 	tests := []struct {
@@ -124,6 +125,3 @@ func TestConfig_DeleteKey(t *testing.T) {
 		assert.Equal(t, tc.err, err, "Test[%v] failed.", i)
 	}
 }
-
-
-

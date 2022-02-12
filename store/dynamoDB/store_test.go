@@ -1,15 +1,18 @@
 package dynamoDB
 
 import (
+	"os"
+	"testing"
+
 	"developer.zopsmart.com/go/gofr/pkg/datastore"
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/mcafee/generic-data-service/store"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
+
+	"github.com/mcafee/generic-data-service/store"
 )
 
 func TestMain(m *testing.M) {
