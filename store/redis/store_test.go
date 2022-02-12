@@ -11,8 +11,7 @@ import (
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 )
 
-
-func initializeTest(t *testing.T) (*gofr.Gofr,*gofr.Context){
+func initializeTest(t *testing.T) (*gofr.Gofr, *gofr.Context) {
 	app := gofr.New()
 	c := gofr.NewContext(nil, nil, app)
 	c.Context = context.Background()
@@ -21,12 +20,11 @@ func initializeTest(t *testing.T) (*gofr.Gofr,*gofr.Context){
 	seeder := datastore.NewSeeder(&app.DataStore, "../../db")
 	seeder.RefreshRedis(t, "store")
 
-	return app,c
+	return app, c
 }
 
-
 func TestSetWithError(t *testing.T) {
-	app,c:=initializeTest(t)
+	app, c := initializeTest(t)
 
 	app.Redis.Close()
 
@@ -39,7 +37,7 @@ func TestSetWithError(t *testing.T) {
 }
 
 func TestSet(t *testing.T) {
-	_,c:=initializeTest(t)
+	_, c := initializeTest(t)
 	store := New()
 
 	err := store.Set(c, "someKey123", "someValue123")
@@ -49,7 +47,7 @@ func TestSet(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	_,c:=initializeTest(t)
+	_, c := initializeTest(t)
 	tests := []struct {
 		desc string
 		key  string
@@ -71,7 +69,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	_,c:=initializeTest(t)
+	_, c := initializeTest(t)
 	tests := []struct {
 		desc string
 		key  string

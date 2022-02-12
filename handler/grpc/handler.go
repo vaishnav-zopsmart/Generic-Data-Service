@@ -1,8 +1,10 @@
 package grpc
 
 import (
+	"context"
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
+	"developer.zopsmart.com/go/gofr/pkg/log"
 	"github.com/mcafee/generic-data-service/store"
 )
 
@@ -19,21 +21,32 @@ func New(s store.Storer) handler {
 	}
 }
 
-func (h handler) Get(ctx *gofr.Context, k *Key) (*Response, error) {
-	value, err := h.st.Get(ctx, k.Key)
+func (h handler) Get(ctx context.Context, k *Key) (*Data, error) {
+	if k.Key == "" {
+		return nil, errors.MissingParam{Param: []string{"key"}}
+	}
+
+	logger:=log.NewCorrelationLogger("")
+	c:=&gofr.Context{Context:ctx,Logger: logger}
+
+	value, err := h.st.Get(c, k.Key)
 	if err != nil {
 		return nil, errors.EntityNotFound{Entity: "value", ID: k.Key}
 	}
 
-	resp := &Response{
-		Response: value,
+	resp := &Data{
+		Key:   k.Key,
+		Value: value,
 	}
 
 	return resp, nil
 }
 
-func (h handler) SetKey(ctx *gofr.Context, d *Data) (*Response, error) {
-	err := h.st.Set(ctx, d.Key, d.Value)
+func (h handler) SetKey(ctx context.Context, d *Data) (*Response, error) {
+	logger:=log.NewCorrelationLogger("")
+	c:=&gofr.Context{Context:ctx,Logger: logger}
+
+	err := h.st.Set(c, d.Key, d.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -45,8 +58,16 @@ func (h handler) SetKey(ctx *gofr.Context, d *Data) (*Response, error) {
 	return resp, nil
 }
 
-func (h handler) DeleteKey(ctx *gofr.Context, k *Key) (*Response, error) {
-	err := h.st.Delete(ctx, k.Key)
+
+func (h handler) DeleteKey(ctx context.Context, k *Key) (*Response, error) {
+	logger:=log.NewCorrelationLogger("")
+	c:=&gofr.Context{Context:ctx,Logger: logger}
+
+	if k.Key==""{
+		return nil,errors.MissingParam{Param: []string{"key"}}
+	}
+
+	err := h.st.Delete(c, k.Key)
 	if err != nil {
 		return nil, err
 	}

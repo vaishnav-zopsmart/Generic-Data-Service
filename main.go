@@ -33,7 +33,6 @@ func main() {
 	app.POST("/config", h.SetKey)
 	app.DELETE("/config/{key}", h.DeleteKey)
 
-
 	grpcHandler := grpc.New(s)
 	grpc.RegisterGenericDataServiceServer(app.Server.GRPC.Server(), grpcHandler)
 
