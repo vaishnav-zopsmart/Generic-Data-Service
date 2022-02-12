@@ -26,8 +26,7 @@ func (h handler) Get(ctx context.Context, k *Key) (*Data, error) {
 		return nil, errors.MissingParam{Param: []string{"key"}}
 	}
 
-	logger:=log.NewCorrelationLogger("")
-	c:=&gofr.Context{Context:ctx,Logger: logger}
+	c:=getContext(ctx)
 
 	value, err := h.st.Get(c, k.Key)
 	if err != nil {
@@ -43,8 +42,7 @@ func (h handler) Get(ctx context.Context, k *Key) (*Data, error) {
 }
 
 func (h handler) SetKey(ctx context.Context, d *Data) (*Response, error) {
-	logger:=log.NewCorrelationLogger("")
-	c:=&gofr.Context{Context:ctx,Logger: logger}
+	c:=getContext(ctx)
 
 	err := h.st.Set(c, d.Key, d.Value)
 	if err != nil {
@@ -60,8 +58,7 @@ func (h handler) SetKey(ctx context.Context, d *Data) (*Response, error) {
 
 
 func (h handler) DeleteKey(ctx context.Context, k *Key) (*Response, error) {
-	logger:=log.NewCorrelationLogger("")
-	c:=&gofr.Context{Context:ctx,Logger: logger}
+	c:=getContext(ctx)
 
 	if k.Key==""{
 		return nil,errors.MissingParam{Param: []string{"key"}}
@@ -77,4 +74,9 @@ func (h handler) DeleteKey(ctx context.Context, k *Key) (*Response, error) {
 	}
 
 	return resp, nil
+}
+
+func getContext(ctx context.Context) *gofr.Context{
+	logger:=log.NewCorrelationLogger("")
+	return &gofr.Context{Context:ctx,Logger: logger}
 }
