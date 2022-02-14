@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
+
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 
 	"github.com/mcafee/generic-data-service/handler"
 	"github.com/mcafee/generic-data-service/handler/grpc"
 	"github.com/mcafee/generic-data-service/stores"
 	"github.com/mcafee/generic-data-service/stores/dynamodb"
+	"github.com/mcafee/generic-data-service/stores/memory"
 	"github.com/mcafee/generic-data-service/stores/redis"
 )
 
@@ -16,6 +19,7 @@ func main() {
 	var s stores.Storer
 
 	backendStore := app.Config.Get("BACKEND_STORE")
+	fmt.Println(backendStore)
 
 	switch backendStore {
 	case "redis":
@@ -24,7 +28,7 @@ func main() {
 		table := app.Config.Get("DYNAMODB_TABLE")
 		s = dynamodb.New(table)
 	default:
-		return
+		s = memory.New()
 	}
 
 	h := handler.New(s)
