@@ -16,6 +16,7 @@ import (
 	grpc2 "github.com/mcafee/generic-data-service/handler/grpc"
 )
 
+// nolint:dupl // duplicate codes to test different BACKEND STORES
 func TestHTTPClientRedis(t *testing.T) {
 	t.Setenv("BACKEND_STORE", "redis")
 
@@ -55,6 +56,7 @@ func TestHTTPClientRedis(t *testing.T) {
 	}
 }
 
+// nolint:dupl // duplicate codes to test different BACKEND STORES
 func TestHTTPClientDynamoDB(t *testing.T) {
 	t.Setenv("BACKEND_STORE", "dynamodb")
 
@@ -94,6 +96,7 @@ func TestHTTPClientDynamoDB(t *testing.T) {
 	}
 }
 
+// nolint:dupl // duplicate codes to test different BACKEND STORES
 func TestGRPCClientRedis(t *testing.T) {
 	t.Setenv("BACKEND_STORE", "redis")
 
@@ -120,6 +123,7 @@ func TestGRPCClientRedis(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// nolint:dupl // duplicate codes to test different BACKEND STORES
 func TestGRPCClientDynamoDB(t *testing.T) {
 	t.Setenv("BACKEND_STORE", "dynamodb")
 
