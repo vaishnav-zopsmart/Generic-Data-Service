@@ -118,7 +118,7 @@ func TestConfig_DeleteKey(t *testing.T) {
 
 		grcpHandler := New(mockStore, app)
 
-		resp, err := grcpHandler.DeleteKey(ctx, &Key{Key: tc.key})
+		resp, err := grcpHandler.Delete(ctx, &Key{Key: tc.key})
 
 		assert.Equal(t, tc.resp, resp, "Test[%v] failed.", i)
 

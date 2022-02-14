@@ -18,7 +18,7 @@ func initializeTest(t *testing.T) (*gofr.Gofr, *gofr.Context) {
 
 	// initializing the seeder
 	seeder := datastore.NewSeeder(&app.DataStore, "../../db")
-	seeder.RefreshRedis(t, "stores")
+	seeder.RefreshRedis(t, "store")
 
 	return app, c
 }
