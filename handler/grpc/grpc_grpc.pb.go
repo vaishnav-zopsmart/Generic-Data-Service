@@ -4,7 +4,6 @@ package grpc
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,9 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GenericDataServiceClient interface {
-	GetKey(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Data, error)
-	SetKey(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Response, error)
-	DeleteKey(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Response, error)
+	Get(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Data, error)
+	Set(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Response, error)
+	Delete(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Response, error)
 }
 
 type genericDataServiceClient struct {
@@ -32,27 +31,27 @@ func NewGenericDataServiceClient(cc grpc.ClientConnInterface) GenericDataService
 	return &genericDataServiceClient{cc}
 }
 
-func (c *genericDataServiceClient) GetKey(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Data, error) {
+func (c *genericDataServiceClient) Get(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Data, error) {
 	out := new(Data)
-	err := c.cc.Invoke(ctx, "/GenericDataService/GetKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/GenericDataService/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *genericDataServiceClient) SetKey(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Response, error) {
+func (c *genericDataServiceClient) Set(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/GenericDataService/SetKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/GenericDataService/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *genericDataServiceClient) DeleteKey(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Response, error) {
+func (c *genericDataServiceClient) Delete(ctx context.Context, in *Key, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/GenericDataService/DeleteKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/GenericDataService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +62,9 @@ func (c *genericDataServiceClient) DeleteKey(ctx context.Context, in *Key, opts 
 // All implementations must embed UnimplementedGenericDataServiceServer
 // for forward compatibility
 type GenericDataServiceServer interface {
-	GetKey(context.Context, *Key) (*Data, error)
-	SetKey(context.Context, *Data) (*Response, error)
-	DeleteKey(context.Context, *Key) (*Response, error)
+	Get(context.Context, *Key) (*Data, error)
+	Set(context.Context, *Data) (*Response, error)
+	Delete(context.Context, *Key) (*Response, error)
 	mustEmbedUnimplementedGenericDataServiceServer()
 }
 
@@ -73,14 +72,14 @@ type GenericDataServiceServer interface {
 type UnimplementedGenericDataServiceServer struct {
 }
 
-func (UnimplementedGenericDataServiceServer) GetKey(context.Context, *Key) (*Data, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetKey not implemented")
+func (UnimplementedGenericDataServiceServer) Get(context.Context, *Key) (*Data, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedGenericDataServiceServer) SetKey(context.Context, *Data) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetKey not implemented")
+func (UnimplementedGenericDataServiceServer) Set(context.Context, *Data) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
-func (UnimplementedGenericDataServiceServer) DeleteKey(context.Context, *Key) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteKey not implemented")
+func (UnimplementedGenericDataServiceServer) Delete(context.Context, *Key) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedGenericDataServiceServer) mustEmbedUnimplementedGenericDataServiceServer() {}
 
@@ -95,56 +94,56 @@ func RegisterGenericDataServiceServer(s grpc.ServiceRegistrar, srv GenericDataSe
 	s.RegisterService(&GenericDataService_ServiceDesc, srv)
 }
 
-func _GenericDataService_GetKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GenericDataService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Key)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GenericDataServiceServer).GetKey(ctx, in)
+		return srv.(GenericDataServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/GenericDataService/GetKey",
+		FullMethod: "/GenericDataService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GenericDataServiceServer).GetKey(ctx, req.(*Key))
+		return srv.(GenericDataServiceServer).Get(ctx, req.(*Key))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GenericDataService_SetKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GenericDataService_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Data)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GenericDataServiceServer).SetKey(ctx, in)
+		return srv.(GenericDataServiceServer).Set(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/GenericDataService/SetKey",
+		FullMethod: "/GenericDataService/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GenericDataServiceServer).SetKey(ctx, req.(*Data))
+		return srv.(GenericDataServiceServer).Set(ctx, req.(*Data))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GenericDataService_DeleteKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GenericDataService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Key)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GenericDataServiceServer).DeleteKey(ctx, in)
+		return srv.(GenericDataServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/GenericDataService/DeleteKey",
+		FullMethod: "/GenericDataService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GenericDataServiceServer).DeleteKey(ctx, req.(*Key))
+		return srv.(GenericDataServiceServer).Delete(ctx, req.(*Key))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -157,16 +156,16 @@ var GenericDataService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GenericDataServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetKey",
-			Handler:    _GenericDataService_GetKey_Handler,
+			MethodName: "Get",
+			Handler:    _GenericDataService_Get_Handler,
 		},
 		{
-			MethodName: "SetKey",
-			Handler:    _GenericDataService_SetKey_Handler,
+			MethodName: "Set",
+			Handler:    _GenericDataService_Set_Handler,
 		},
 		{
-			MethodName: "DeleteKey",
-			Handler:    _GenericDataService_DeleteKey_Handler,
+			MethodName: "Delete",
+			Handler:    _GenericDataService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -15,7 +15,7 @@ string key=1;
 }
 
 service GenericDataService {
-    rpc GetKey(Key) returns (Data);
-    rpc SetKey(Data) returns (Response);
-    rpc DeleteKey(Key) returns (Response);
+    rpc Get(Key) returns (Data);
+    rpc Set(Data) returns (Response);
+    rpc Delete(Key) returns (Response);
 }

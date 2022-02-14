@@ -5,15 +5,15 @@ import (
 
 	"github.com/mcafee/generic-data-service/handler"
 	"github.com/mcafee/generic-data-service/handler/grpc"
-	"github.com/mcafee/generic-data-service/store"
-	"github.com/mcafee/generic-data-service/store/dynamodb"
-	"github.com/mcafee/generic-data-service/store/redis"
+	"github.com/mcafee/generic-data-service/stores"
+	"github.com/mcafee/generic-data-service/stores/dynamodb"
+	"github.com/mcafee/generic-data-service/stores/redis"
 )
 
 func main() {
 	app := gofr.New()
 
-	var s store.Storer
+	var s stores.Storer
 
 	backendStore := app.Config.Get("BACKEND_STORE")
 
@@ -30,9 +30,9 @@ func main() {
 	h := handler.New(s)
 
 	// Specifying the different routes supported by this services
-	app.GET("/config/{key}", h.GetKey)
-	app.POST("/config", h.SetKey)
-	app.DELETE("/config/{key}", h.DeleteKey)
+	app.GET("/config/{key}", h.Get)
+	app.POST("/config", h.Set)
+	app.DELETE("/config/{key}", h.Delete)
 
 	grpcHandler := grpc.New(s, app)
 	grpc.RegisterGenericDataServiceServer(app.Server.GRPC.Server(), grpcHandler)

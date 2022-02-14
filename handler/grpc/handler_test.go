@@ -12,12 +12,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mcafee/generic-data-service/store"
+	"github.com/mcafee/generic-data-service/stores"
 )
 
-func initializeTest(t *testing.T) (*store.MockStorer, *gofr.Gofr) {
+func initializeTest(t *testing.T) (*stores.MockStorer, *gofr.Gofr) {
 	ctrl := gomock.NewController(t)
-	mockStore := store.NewMockStorer(ctrl)
+	mockStore := stores.NewMockStorer(ctrl)
 	app := gofr.New()
 
 	return mockStore, app
@@ -38,7 +38,7 @@ func TestConfig_GetKey(t *testing.T) {
 		err  error
 	}{
 		{"success case", "1", &Data{Key: "1", Value: "user1"}, nil},
-		{"error from store", "2", nil, err},
+		{"error from stores", "2", nil, err},
 		{"missing param", "", nil, errors.MissingParam{Param: []string{"key"}}},
 	}
 
@@ -49,7 +49,7 @@ func TestConfig_GetKey(t *testing.T) {
 
 		grcpHandler := New(mockStore, app)
 
-		resp, err := grcpHandler.GetKey(ctx, &Key{Key: tc.key})
+		resp, err := grcpHandler.Get(ctx, &Key{Key: tc.key})
 
 		assert.Equal(t, tc.resp, resp, "Test[%v] failed.", i)
 
@@ -74,7 +74,7 @@ func TestConfig_SetKey(t *testing.T) {
 		err    error
 	}{
 		{"success case", mp1, &Response{Response: "Successful"}, nil},
-		{"error from store", mp2, nil, err},
+		{"error from stores", mp2, nil, err},
 	}
 
 	for _, tc := range tests {
@@ -84,7 +84,7 @@ func TestConfig_SetKey(t *testing.T) {
 
 		grcpHandler := New(mockStore, app)
 
-		output, err := grcpHandler.SetKey(ctx, tc.input)
+		output, err := grcpHandler.Set(ctx, tc.input)
 
 		assert.Equal(t, tc.output, output)
 
@@ -107,7 +107,7 @@ func TestConfig_DeleteKey(t *testing.T) {
 		err  error
 	}{
 		{"success case", "1", &Response{Response: "Deleted successfully"}, nil},
-		{"error from store", "2", nil, err},
+		{"error from stores", "2", nil, err},
 		{"missing param", "", nil, errors.MissingParam{Param: []string{"key"}}},
 	}
 

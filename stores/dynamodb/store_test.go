@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mcafee/generic-data-service/store"
+	"github.com/mcafee/generic-data-service/stores"
 )
 
 func TestMain(m *testing.M) {
@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func initializeTest(t *testing.T) (*gofr.Context, store.Storer) {
+func initializeTest(t *testing.T) (*gofr.Context, stores.Storer) {
 	app := gofr.New()
 
 	// RefreshTables

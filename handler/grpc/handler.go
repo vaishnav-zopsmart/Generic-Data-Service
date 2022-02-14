@@ -6,32 +6,32 @@ import (
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 
-	"github.com/mcafee/generic-data-service/store"
+	"github.com/mcafee/generic-data-service/stores"
 )
 
 type handler struct {
 	UnimplementedGenericDataServiceServer
-	st  store.Storer
+	s   stores.Storer
 	app *gofr.Gofr
 }
 
 // New is factory function for GRPC Handler
 //nolint:revive // handler should not be used without proper initilization with required dependency
-func New(s store.Storer, app *gofr.Gofr) handler {
+func New(s stores.Storer, app *gofr.Gofr) handler {
 	return handler{
-		st:  s,
+		s:   s,
 		app: app,
 	}
 }
 
-func (h handler) GetKey(ctx context.Context, k *Key) (*Data, error) {
+func (h handler) Get(ctx context.Context, k *Key) (*Data, error) {
 	if k.Key == "" {
 		return nil, errors.MissingParam{Param: []string{"key"}}
 	}
 
 	c := getContext(ctx, h.app)
 
-	value, err := h.st.Get(c, k.Key)
+	value, err := h.s.Get(c, k.Key)
 	if err != nil {
 		return nil, errors.EntityNotFound{Entity: "value", ID: k.Key}
 	}
@@ -44,10 +44,10 @@ func (h handler) GetKey(ctx context.Context, k *Key) (*Data, error) {
 	return resp, nil
 }
 
-func (h handler) SetKey(ctx context.Context, d *Data) (*Response, error) {
+func (h handler) Set(ctx context.Context, d *Data) (*Response, error) {
 	c := getContext(ctx, h.app)
 
-	err := h.st.Set(c, d.Key, d.Value)
+	err := h.s.Set(c, d.Key, d.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -59,14 +59,14 @@ func (h handler) SetKey(ctx context.Context, d *Data) (*Response, error) {
 	return resp, nil
 }
 
-func (h handler) DeleteKey(ctx context.Context, k *Key) (*Response, error) {
+func (h handler) Delete(ctx context.Context, k *Key) (*Response, error) {
 	c := getContext(ctx, h.app)
 
 	if k.Key == "" {
 		return nil, errors.MissingParam{Param: []string{"key"}}
 	}
 
-	err := h.st.Delete(c, k.Key)
+	err := h.s.Delete(c, k.Key)
 	if err != nil {
 		return nil, err
 	}

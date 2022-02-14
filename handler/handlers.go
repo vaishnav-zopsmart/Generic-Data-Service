@@ -4,23 +4,23 @@ import (
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 
-	"github.com/mcafee/generic-data-service/store"
+	"github.com/mcafee/generic-data-service/stores"
 )
 
 type config struct {
-	st store.Storer
+	st stores.Storer
 }
 
 // New is factory function for config
 //nolint:revive // handler should not be used without proper initilization with required dependency
-func New(s store.Storer) config {
+func New(s stores.Storer) config {
 	return config{
 		st: s,
 	}
 }
 
-// GetKey is a handler function of type gofr.Handler, it fetches keys
-func (c config) GetKey(ctx *gofr.Context) (interface{}, error) {
+// Get is a handler function of type gofr.Handler, it fetches keys
+func (c config) Get(ctx *gofr.Context) (interface{}, error) {
 	// fetch the path parameter as specified in the route
 	key := ctx.PathParam("key")
 	if key == "" {
@@ -38,8 +38,8 @@ func (c config) GetKey(ctx *gofr.Context) (interface{}, error) {
 	return resp, nil
 }
 
-// SetKey is a handler function of type gofr.Handler, it sets keys
-func (c config) SetKey(ctx *gofr.Context) (interface{}, error) {
+// Set is a handler function of type gofr.Handler, it sets keys
+func (c config) Set(ctx *gofr.Context) (interface{}, error) {
 	input := make(map[string]string)
 
 	err := ctx.Bind(&input)
@@ -57,8 +57,8 @@ func (c config) SetKey(ctx *gofr.Context) (interface{}, error) {
 	return "Successful", nil
 }
 
-// DeleteKey is a handler function of type gofr.Handler, it deletes keys
-func (c config) DeleteKey(ctx *gofr.Context) (interface{}, error) {
+// Delete is a handler function of type gofr.Handler, it deletes keys
+func (c config) Delete(ctx *gofr.Context) (interface{}, error) {
 	// fetch the path parameter as specified in the route
 	key := ctx.PathParam("key")
 	if key == "" {
@@ -66,7 +66,6 @@ func (c config) DeleteKey(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	if err := c.st.Delete(ctx, key); err != nil {
-		ctx.Logger.Errorf("err: ", err)
 		return nil, err
 	}
 

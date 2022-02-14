@@ -15,12 +15,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mcafee/generic-data-service/store"
+	"github.com/mcafee/generic-data-service/stores"
 )
 
-func initializeTest(t *testing.T) (*store.MockStorer, *gofr.Gofr) {
+func initializeTest(t *testing.T) (*stores.MockStorer, *gofr.Gofr) {
 	ctrl := gomock.NewController(t)
-	service := store.NewMockStorer(ctrl)
+	service := stores.NewMockStorer(ctrl)
 	app := gofr.New()
 
 	return service, app
@@ -57,7 +57,7 @@ func TestConfig_GetKey(t *testing.T) {
 		err    error
 	}{
 		{"success case", "1", op, nil},
-		{"error from store", "2", nil, err},
+		{"error from stores", "2", nil, err},
 		{"missing param", "", nil, errors.MissingParam{Param: []string{"key"}}},
 	}
 
@@ -66,7 +66,7 @@ func TestConfig_GetKey(t *testing.T) {
 
 		ctx := getContext(http.MethodGet, nil, map[string]string{"key": tc.key}, app)
 
-		output, err := h.GetKey(ctx)
+		output, err := h.Get(ctx)
 
 		assert.Equal(t, tc.output, output)
 
@@ -91,7 +91,7 @@ func TestConfig_SetKey(t *testing.T) {
 		err    error
 	}{
 		{"success case", mp1, "Successful", nil},
-		{"error from store", mp2, nil, err},
+		{"error from stores", mp2, nil, err},
 	}
 
 	for _, tc := range tests {
@@ -106,7 +106,7 @@ func TestConfig_SetKey(t *testing.T) {
 
 		ctx := getContext(http.MethodPost, body, nil, app)
 
-		output, err := h.SetKey(ctx)
+		output, err := h.Set(ctx)
 
 		assert.Equal(t, tc.output, output)
 
@@ -132,7 +132,7 @@ func TestConfig_SetKeyBindError(t *testing.T) {
 
 	ctx := getContext(http.MethodPost, body, nil, app)
 
-	output, err := h.SetKey(ctx)
+	output, err := h.Set(ctx)
 
 	assert.Nil(t, output)
 
@@ -154,7 +154,7 @@ func TestConfig_DeleteKey(t *testing.T) {
 		err    error
 	}{
 		{"success case", "1", "Deleted successfully", nil},
-		{"error from store", "2", nil, err},
+		{"error from stores", "2", nil, err},
 		{"missing param", "", nil, errors.MissingParam{Param: []string{"key"}}},
 	}
 
@@ -163,7 +163,7 @@ func TestConfig_DeleteKey(t *testing.T) {
 
 		ctx := getContext(http.MethodDelete, nil, map[string]string{"key": tc.key}, app)
 
-		output, err := h.DeleteKey(ctx)
+		output, err := h.Delete(ctx)
 
 		assert.Equal(t, tc.output, output)
 

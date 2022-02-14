@@ -8,19 +8,19 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
-	"github.com/mcafee/generic-data-service/store"
+	"github.com/mcafee/generic-data-service/stores"
 )
 
-type dynamoDBstore struct {
+type store struct {
 	tableName string
 }
 
-// New factory function for person store
-func New(t string) store.Storer {
-	return dynamoDBstore{tableName: t}
+// New factory function for person stores
+func New(t string) stores.Storer {
+	return store{tableName: t}
 }
 
-func (s dynamoDBstore) Get(ctx *gofr.Context, key string) (string, error) {
+func (s store) Get(ctx *gofr.Context, key string) (string, error) {
 	input := &dynamodb.GetItemInput{
 		AttributesToGet: []*string{aws.String("value")},
 		Key: map[string]*dynamodb.AttributeValue{
@@ -47,7 +47,7 @@ func (s dynamoDBstore) Get(ctx *gofr.Context, key string) (string, error) {
 	return v.Value, nil
 }
 
-func (s dynamoDBstore) Set(ctx *gofr.Context, key, value string) error {
+func (s store) Set(ctx *gofr.Context, key, value string) error {
 	input := &dynamodb.PutItemInput{
 		Item: map[string]*dynamodb.AttributeValue{
 			"id":    {S: aws.String(key)},
@@ -61,7 +61,7 @@ func (s dynamoDBstore) Set(ctx *gofr.Context, key, value string) error {
 	return err
 }
 
-func (s dynamoDBstore) Delete(ctx *gofr.Context, key string) error {
+func (s store) Delete(ctx *gofr.Context, key string) error {
 	input := &dynamodb.DeleteItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {S: aws.String(key)},

@@ -17,10 +17,10 @@ import (
 )
 
 func TestIntegration(t *testing.T) {
-	body := []byte(`{"name":"user1"}`)
-
 	go main()
 	time.Sleep(time.Second * 5)
+
+	body := []byte(`{"name":"user1"}`)
 
 	tests := []struct {
 		desc       string
@@ -29,9 +29,9 @@ func TestIntegration(t *testing.T) {
 		statusCode int
 		body       []byte
 	}{
-		{"get success", http.MethodPost, "config", http.StatusCreated, body},
-		{"get non existent entity", http.MethodGet, "config/name", http.StatusOK, nil},
-		{"unregistered update route", http.MethodDelete, "config/name", http.StatusNoContent, []byte(`{}`)},
+		{"POST success", http.MethodPost, "config", http.StatusCreated, body},
+		{"GET success", http.MethodGet, "config/name", http.StatusOK, nil},
+		{"Delete Success", http.MethodDelete, "config/name", http.StatusNoContent, []byte(`{}`)},
 	}
 
 	for i, tc := range tests {
@@ -65,8 +65,6 @@ func TestGRPCClient(t *testing.T) {
 	defer conn.Close()
 
 	c := grpc2.NewGenericDataServiceClient(conn)
-
-	grpc.NewServer()
 
 	_, err = c.SetKey(context.TODO(), &grpc2.Data{Key: "1", Value: "user1"})
 	assert.NoError(t, err)

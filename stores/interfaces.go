@@ -1,4 +1,4 @@
-package store
+package stores
 
 import (
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
