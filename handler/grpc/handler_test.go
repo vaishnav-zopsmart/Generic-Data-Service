@@ -17,10 +17,10 @@ import (
 
 func initializeTest(t *testing.T) (*store.MockStorer, *gofr.Gofr) {
 	ctrl := gomock.NewController(t)
-	service := store.NewMockStorer(ctrl)
+	mockStore := store.NewMockStorer(ctrl)
 	app := gofr.New()
 
-	return service, app
+	return mockStore, app
 }
 
 func TestConfig_GetKey(t *testing.T) {
@@ -47,9 +47,9 @@ func TestConfig_GetKey(t *testing.T) {
 		r := request.NewHTTPRequest(req)
 		ctx := gofr.NewContext(nil, r, app)
 
-		grcpHandler := New(mockStore)
+		grcpHandler := New(mockStore, app)
 
-		resp, err := grcpHandler.Get(ctx, &Key{Key: tc.key})
+		resp, err := grcpHandler.GetKey(ctx, &Key{Key: tc.key})
 
 		assert.Equal(t, tc.resp, resp, "Test[%v] failed.", i)
 
@@ -82,7 +82,7 @@ func TestConfig_SetKey(t *testing.T) {
 		r := request.NewHTTPRequest(req)
 		ctx := gofr.NewContext(nil, r, app)
 
-		grcpHandler := New(mockStore)
+		grcpHandler := New(mockStore, app)
 
 		output, err := grcpHandler.SetKey(ctx, tc.input)
 
@@ -116,7 +116,7 @@ func TestConfig_DeleteKey(t *testing.T) {
 		r := request.NewHTTPRequest(req)
 		ctx := gofr.NewContext(nil, r, app)
 
-		grcpHandler := New(mockStore)
+		grcpHandler := New(mockStore, app)
 
 		resp, err := grcpHandler.DeleteKey(ctx, &Key{Key: tc.key})
 
