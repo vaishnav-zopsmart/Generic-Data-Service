@@ -150,8 +150,9 @@ func TestGRPCClientDynamoDB(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestInvalidBackendStore(t *testing.T) {
-	t.Setenv("BACKEND_STORE", "")
+// nolint:dupl // duplicate codes to test different BACKEND STORES
+func TestGRPCClientMemoryStore(t *testing.T) {
+	t.Setenv("BACKEND_STORE", "memory")
 
 	go main()
 	time.Sleep(time.Second * 5)
@@ -167,5 +168,50 @@ func TestInvalidBackendStore(t *testing.T) {
 	c := grpc2.NewGenericDataServiceClient(conn)
 
 	_, err = c.Set(context.TODO(), &grpc2.Data{Key: "1", Value: "user1"})
-	assert.Error(t, err, "Expected error: Error while dialing dial tcp ")
+	assert.NoError(t, err)
+
+	_, err = c.Get(context.TODO(), &grpc2.Key{Key: "1"})
+	assert.NoError(t, err)
+
+	_, err = c.Delete(context.TODO(), &grpc2.Key{Key: "1"})
+	assert.NoError(t, err)
+}
+
+func TestHTTPClientMemoryStore(t *testing.T) {
+	t.Setenv("BACKEND_STORE", "memory")
+
+	go main()
+	time.Sleep(time.Second * 5)
+
+	body := []byte(`{"name":"user1"}`)
+
+	tests := []struct {
+		desc string
+
+		method     string
+		endpoint   string
+		statusCode int
+		body       []byte
+	}{
+		{"POST success in-memory storage", http.MethodPost, "config", http.StatusCreated, body},
+		{"GET success in-memory storage", http.MethodGet, "config/name", http.StatusOK, nil},
+		{"Delete success in-memory storage", http.MethodDelete, "config/name", http.StatusNoContent, []byte(`{}`)},
+	}
+
+	for i, tc := range tests {
+		req, _ := request.NewMock(tc.method, "http://localhost:9098/"+tc.endpoint, bytes.NewBuffer(tc.body))
+		c := http.Client{}
+
+		resp, err := c.Do(req)
+		if err != nil {
+			t.Errorf("TEST[%v] Failed.\tHTTP request encountered Err: %v\n%s", i, err, tc.desc)
+			continue
+		}
+
+		if resp.StatusCode != tc.statusCode {
+			t.Errorf("TEST[%v] Failed.\tExpected %v\tGot %v\n%s", i, tc.statusCode, resp.StatusCode, tc.desc)
+		}
+
+		_ = resp.Body.Close()
+	}
 }
